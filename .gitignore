@@ -1,0 +1,12 @@
+# PhpStorm
+/.idea/
+###> symfony/framework-bundle ###
+/.env.local
+/.env.local.php
+/.env.*.local
+/config/secrets/prod/prod.decrypt.private.php
+/public/bundles/
+/test/var/
+/vendor/
+/var/
+###< symfony/framework-bundle ###

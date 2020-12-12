@@ -1,0 +1,46 @@
+version: '3.7'
+
+networks:
+    test_network:
+        name: test_network
+        ipam:
+            config:
+                # доступные адреса 172.168.38.1 - 172.168.38.254
+                - subnet: 172.168.38.0/24
+
+services:
+    test_php:
+        build: docker/php
+        container_name: test_php
+        volumes:
+            - ./:/var/www
+            - ./docker/php/www.conf:/usr/local/etc/php-fpm.d/www.conf:ro
+        networks:
+            test_network:
+                ipv4_address: 172.168.38.20
+        ports:
+            - 127.0.0.1:3001:3001
+
+    test_redis:
+        image: redis:6.0-alpine
+        container_name: test_redis
+        ports:
+            - 127.0.0.1:6379:6379
+        networks:
+            test_network:
+                ipv4_address: 172.168.38.40
+
+    test_supervisor:
+        build: docker/supervisor
+        container_name: test_supervisor
+        volumes:
+            # сам проект
+            - ./:/var/www
+            - ./docker/supervisor/supervisord.conf:/etc/supervisor/conf.d/supervisord.conf
+            - ./docker/logs/supervisor:/var/log/supervisor
+            - ./docker/php/php.ini:/usr/local/etc/php/php.ini:ro
+            - ./docker/php/www.conf:/usr/local/etc/php-fpm.d/www.conf:ro
+        networks:
+            test_network:
+                ipv4_address: 172.168.38.60
+
